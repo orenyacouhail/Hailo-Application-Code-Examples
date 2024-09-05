@@ -1,3 +1,4 @@
 zenlog
 pillow
 opencv-python
+loguru
