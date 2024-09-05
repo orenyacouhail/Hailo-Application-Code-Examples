@@ -24,10 +24,7 @@ Supported Models
 
 This example expects the hef to contain HailoRT-Postprocess. 
 
-## Running the example:  
-The template for running the example is:
-Because of that, this example only supports detections models that allow 
-hailort-postprocess:
+Because of that, this example only supports detections models that allow hailort-postprocess:
 - yolov8s
 
 
@@ -91,6 +88,7 @@ Additional Notes
 - The example expects a HEF which contains the HailoRT Postprocess
 - The script assumes that the image is in one of the following formats: .jpg, .jpeg, .png or .bmp
 - The annotated files will be saved in the `output_images` folder. 
+- The number of input images should be divisible by the batch_size  
 
 Disclaimer
 ----------

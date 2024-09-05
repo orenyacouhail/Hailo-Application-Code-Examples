@@ -146,6 +146,20 @@ def process_output(
     output_queue.task_done()  # Indicate that processing is complete
 
 
+class RaisingThread(threading.Thread):
+  def run(self):
+    self._exc = None
+    try:
+      super().run()
+    except Exception as e:
+      self._exc = e
+
+  def join(self, timeout=None):
+    super().join(timeout=timeout)
+    if self._exc:
+      raise self._exc
+
+
 def infer(
     images: list[Image.Image],
     net_path: str,
@@ -186,7 +200,7 @@ def infer(
         target=enqueue_images,
         args=(images, batch_size, input_queue, width, height)
     )
-    process_thread = threading.Thread(
+    process_thread = RaisingThread(
         target=process_output,
         args=(
             output_queue, output_path, width, height, class_num,
@@ -201,7 +215,16 @@ def infer(
 
     enqueue_thread.join()
     output_queue.put(None)  # Signal process thread to exit
-    process_thread.join()
+    try:
+        process_thread.join()
+    except KeyError as e: 
+        logger.error(e)
+        return
+    else:        
+        logger.info(
+            f'Inference was successful! Results have been saved in {output_path}'
+        )
+
 
 
 def main() -> None:
@@ -216,22 +239,12 @@ def main() -> None:
 
     output_path = create_output_directory()
     data_type_dict = data_type2dict(args.net, 'FLOAT32')
-
-    try:
-        infer(
-            images, args.net, int(args.batch_size), int(args.class_num),
-            output_path, data_type_dict,
-            max_detections=300, score_threshold=0.001, nms_iou_thresh=0.7,
-            regression_length=15, strides=[8, 16, 32]
-        )
-    except Exception as e:
-        logger.error(e)
-        return
-    else:
-        logger.info(
-            f'Inference was successful! Results have been saved in {output_path}'
-        )
-
+    infer(
+        images, args.net, int(args.batch_size), int(args.class_num),
+        output_path, data_type_dict,
+        max_detections=300, score_threshold=0.001, nms_iou_thresh=0.7,
+        regression_length=15, strides=[8, 16, 32]
+    )
 
 if __name__ == "__main__":
     main()

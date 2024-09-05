@@ -30,7 +30,6 @@ def data_type2dict(net: str, data_type: str) -> dict:
     return data_type_dict
 
 
-
 def post_process_and_save_inference_results(
     image: Image.Image, raw_detections: dict, output_path: Path, 
     image_index: int, height: int, width: int, class_num: int, max_detections: int,
