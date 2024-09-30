@@ -41,13 +41,15 @@ void print_fps(std::int64_t duration, std::string video_path) {
     capture.release();
 }
 
-std::string getCmdOption(int argc, char *argv[], const std::string &longOption, const std::string &shortOption) {
+std::string getCmdOption(int argc, char *argv[], const std::string &option) {
     std::string cmd;
-    for (int i = 1; i < argc; ++i) {
+    for (int i = 1; i < argc; ++i)
+    {
         std::string arg = argv[i];
-        if (arg.find(longOption) == 0 || arg.find(shortOption) == 0) {
-            std::size_t found = arg.find("=") + 1;
-            cmd = arg.substr(found, 200);  
+        if (0 == arg.find(option, 0))
+        {
+            std::size_t found = arg.find("=", 0) + 1;
+            cmd = arg.substr(found, 200);
             return cmd;
         }
     }
@@ -202,8 +204,8 @@ template <typename IN_T, typename OUT_T> hailo_status infer(std::vector<InputVSt
 
 
 int main(int argc, char** argv) {
-    std::string hef_file   = getCmdOption(argc, argv, "--net", "-n");
-    std::string video_path = getCmdOption(argc, argv, "--input", "-i");
+    std::string hef_file   = getCmdOption(argc, argv, "-hef=");
+    std::string video_path = getCmdOption(argc, argv, "-path=");
     auto all_devices       = Device::scan_pcie();
     std::cout << "-I- video path: " << video_path << std::endl;
     std::cout << "-I- hef: " << hef_file << "\n" << std::endl;

@@ -5,7 +5,6 @@ import cv2
 from PIL import Image
 from hailo_platform import HEF
 from loguru import logger
-from typing import List, Dict, Tuple
 
 # Joint pairs used for drawing pose estimations
 JOINT_PAIRS = [
@@ -17,7 +16,7 @@ JOINT_PAIRS = [
 
 class PoseEstPostProcessing:
     def __init__(self, max_detections: int, score_threshold: float, nms_iou_thresh: float,
-                 regression_length: int, strides: List[int]):
+                 regression_length: int, strides: list[int]):
         """
         Initialize the post-processing configuration.
 
@@ -95,8 +94,8 @@ class PoseEstPostProcessing:
         return predictions_dict
     
     def extract_pose_estimation_results(
-        self, endnodes: List[np.ndarray], height: int, width: int, class_num: int
-    ) -> Dict[str, np.ndarray]:
+        self, endnodes: list[np.ndarray], height: int, width: int, class_num: int
+    ) -> dict[str, np.ndarray]:
         """
         Post-process the pose estimation results.
 
@@ -329,9 +328,9 @@ class PoseEstPostProcessing:
 
 
     def decoder(
-        self, raw_boxes: np.ndarray, raw_kpts: np.ndarray, strides: List[int],
-        image_dims: Tuple[int, int], reg_max: int
-    ) -> Tuple[np.ndarray, np.ndarray]:
+        self, raw_boxes: np.ndarray, raw_kpts: np.ndarray, strides: list[int],
+        image_dims: tuple[int, int], reg_max: int
+    ) -> tuple[np.ndarray, np.ndarray]:
         """
         Decode the bounding boxes and keypoints from raw predictions.
 
@@ -406,7 +405,7 @@ class PoseEstPostProcessing:
     def non_max_suppression(
         self, prediction: np.ndarray, conf_thres: float = 0.1, iou_thres: float = 0.45,
         max_det: int = 100, n_kpts: int = 17
-    ) -> List[dict]:
+    ) -> list[dict]:
         """
         Non-Maximum Suppression (NMS) on inference results to reject overlapping detections.
 
